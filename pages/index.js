@@ -6,6 +6,18 @@ import {
   OrkutNostalgicIconSet,
 } from '../src/lib/AlurakutCommons';
 
+const githubAPI = 'https://api.github.com/users/danielalfb/followers';
+
+export async function getServerSideProps() {
+  const res = await fetch(githubAPI);
+  const data = await res.json();
+  return {
+    props: {
+      data,
+    },
+  };
+}
+
 function ProfileSidebar(props) {
   return (
     <Box>
@@ -17,16 +29,15 @@ function ProfileSidebar(props) {
   );
 }
 
-export default function Home() {
+export default function Home({ data }) {
+  let results = [];
+  data.forEach((element) => {
+    results.push(element);
+  });
+  results = results.slice(0, 6);
+
   const user = 'danielalfb';
-  const conexoes = [
-    'LidianeMara',
-    'marcobrunodev',
-    'inglyd',
-    'thatzfer',
-    'juunegreiros',
-    'peas',
-  ];
+
   return (
     <>
       <AlurakutMenu />
@@ -47,15 +58,16 @@ export default function Home() {
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
               Minhas conexões{' '}
-              <span className="boxLink">({conexoes.length})</span>
+              <span className="boxLink">({results.length})</span>
             </h2>
             <ul>
-              {conexoes.map((crr) => {
+              {results.map((result) => {
+                const { id, login, html_url } = result;
                 return (
                   <li>
-                    <a href={`/user/${crr}`} key={crr}>
-                      <img src={`https://github.com/${crr}.png`} />
-                      <span>{crr}</span>
+                    <a href={html_url} key={id}>
+                      <img src={`https://github.com/${login}.png`} />
+                      <span>{login}</span>
                     </a>
                   </li>
                 );
