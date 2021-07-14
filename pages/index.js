@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MainGrid from '../src/components/MainGrid';
 import Box from '../src/components/Box';
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
@@ -9,16 +9,6 @@ import {
 } from '../src/lib/AlurakutCommons';
 
 const githubAPI = 'https://api.github.com/users/danielalfb/followers';
-
-export async function getServerSideProps() {
-  const res = await fetch(githubAPI);
-  const data = await res.json();
-  return {
-    props: {
-      data,
-    },
-  };
-}
 
 function ProfileSidebar(props) {
   return (
@@ -44,20 +34,48 @@ function ProfileSidebar(props) {
   );
 }
 
-export default function Home({ data }) {
-  let results = [];
-  data.forEach((element) => {
-    results.push(element);
-  });
-  results = results.slice(0, 6);
+function ProfileRelationsBox(props) {
+  return (
+    <ProfileRelationsBoxWrapper>
+      <h2 className="smallTitle">
+        {props.title} <span className="boxLink">({props.items.length})</span>
+      </h2>
+      {/* <ul>
+        {props.items.map((crr) => {
+          const { id, login, html_url } = crr;
+          return (
+            <li key={id}>
+              <a href={html_url}>
+                <img src={`https://github.com/${login}.png`} />
+                <span>{login}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ul> */}
+    </ProfileRelationsBoxWrapper>
+  );
+}
+
+export default function Home() {
+  const [followers, setFollowers] = React.useState([]);
+  React.useEffect(() => {
+    fetch(githubAPI)
+      .then((res) => {
+        return res.json();
+      })
+      .then((resFull) => {
+        setFollowers(resFull);
+      });
+  }, []);
+
   const user = 'danielalfb';
   const [communities, setCommunities] = React.useState([
     {
       id: '07132021',
-      title: 'Eu odeio acordar cedo',
-      image:
-        'https://img10.orkut.br.com/community/52cc4290facd7fa700b897d8a1dc80aa.jpg',
-      url: 'https://github.com/danielalfb/alurakut',
+      title: 'Co&Ca',
+      image: 'https://m.media-amazon.com/images/I/61TJ9b3IegL._AC_SL1500_.jpg',
+      url: 'https://open.spotify.com/artist/3utxjLheHaVEd9bPjQRsy8',
     },
   ]);
 
@@ -120,25 +138,7 @@ export default function Home({ data }) {
           className="profileConnectArea"
           style={{ gridArea: 'profileConnectArea' }}
         >
-          <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">
-              Minhas conexões{' '}
-              <span className="boxLink">({results.length})</span>
-            </h2>
-            <ul>
-              {results.map((result) => {
-                const { id, login, html_url } = result;
-                return (
-                  <li key={id}>
-                    <a href={html_url}>
-                      <img src={`https://github.com/${login}.png`} />
-                      <span>{login}</span>
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          </ProfileRelationsBoxWrapper>
+          <ProfileRelationsBox title="Seguidores" items={followers} />
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">Minhas comunidades</h2>
             <ul>
