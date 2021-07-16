@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components';
 import NextLink from 'next/link';
 
 const BASE_URL = 'http://alurakut.vercel.app/';
-const LOGO_URL = './logo.svg';
 const v = '1';
 
 function Link({ href, children, ...props }) {
@@ -23,7 +22,7 @@ export function AlurakutMenu({ githubUser }) {
   return (
     <AlurakutMenu.Wrapper isMenuOpen={isMenuOpen}>
       <div className="container">
-        <AlurakutMenu.Logo src={LOGO_URL} />
+        <AlurakutMenu.Logo src="https://svgshare.com/i/ZEN.svg" />
 
         <nav style={{ flex: 1 }}>
           {[
