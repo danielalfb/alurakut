@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import NextLink from 'next/link';
 
 const BASE_URL = 'http://alurakut.vercel.app/';
+const LOGO_URL = './logo.svg';
 const v = '1';
 
 function Link({ href, children, ...props }) {
@@ -22,7 +23,7 @@ export function AlurakutMenu({ githubUser }) {
   return (
     <AlurakutMenu.Wrapper isMenuOpen={isMenuOpen}>
       <div className="container">
-        <AlurakutMenu.Logo src={`${BASE_URL}/logo.svg`} />
+        <AlurakutMenu.Logo src={LOGO_URL} />
 
         <nav style={{ flex: 1 }}>
           {[
@@ -59,7 +60,7 @@ export function AlurakutMenu({ githubUser }) {
 }
 AlurakutMenu.Wrapper = styled.header`
   width: 100%;
-  background-color: #308bc5;
+  background-color: #4c6277;
   .alurakutMenuProfileSidebar {
     background: white;
     position: fixed;
@@ -99,7 +100,7 @@ AlurakutMenu.Wrapper = styled.header`
     }
   }
   .container {
-    background-color: #308bc5;
+    background-color: #4c6277;
     padding: 7px 16px;
     max-width: 1110px;
     margin: auto;
@@ -132,7 +133,7 @@ AlurakutMenu.Wrapper = styled.header`
         text-decoration: none;
         &:after {
           content: ' ';
-          background-color: #5292c1;
+          background-color: #92a4bb;
           display: block;
           position: absolute;
           width: 1px;
@@ -162,7 +163,6 @@ AlurakutMenu.Wrapper = styled.header`
   }
 `;
 AlurakutMenu.Logo = styled.img`
-  background-color: #ffffff;
   padding: 9px 14px;
   border-radius: 1000px;
   height: 34px;

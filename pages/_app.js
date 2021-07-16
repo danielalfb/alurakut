@@ -9,7 +9,8 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box; 
   }
   body {
-    background-color:#D9E6F6;
+    background:url('https://www.palaiszelda.com/cado/fds-ecran/botw_7_1920.jpg');
+    background-size:cover ;
     font-family: sans-serif;
   }
 
@@ -30,7 +31,7 @@ const GlobalStyle = createGlobalStyle`
 
 const theme = {
   colors: {
-    primary: '#0070f3',
+    primary: '#4C6277',
   },
 };
 
