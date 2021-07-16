@@ -40,19 +40,24 @@ function ProfileRelationsBox(props) {
       <h2 className="smallTitle">
         {props.title} <span className="boxLink">({props.items.length})</span>
       </h2>
-      {/* <ul>
-        {props.items.map((crr) => {
-          const { id, login, html_url } = crr;
-          return (
-            <li key={id}>
-              <a href={html_url}>
-                <img src={`https://github.com/${login}.png`} />
-                <span>{login}</span>
-              </a>
-            </li>
-          );
-        })}
-      </ul> */}
+      <ul>
+        {props.items
+          .map((crr) => {
+            const { id, login, html_url } = crr;
+            return (
+              <li key={id}>
+                <a href={html_url}>
+                  <img src={`https://github.com/${login}.png`} />
+                  <span>{login}</span>
+                </a>
+              </li>
+            );
+          })
+          .slice(1, 7)}
+      </ul>
+      <a className="boxLink" href="/">
+        Ver todos
+      </a>
     </ProfileRelationsBoxWrapper>
   );
 }
@@ -60,24 +65,40 @@ function ProfileRelationsBox(props) {
 export default function Home() {
   const [followers, setFollowers] = React.useState([]);
   React.useEffect(() => {
-    fetch(githubAPI)
-      .then((res) => {
-        return res.json();
-      })
+    fetch(githubAPI).then(async (res) => {
+      const data = await res.json();
+      setFollowers(data);
+    });
+
+    //GraphQL
+    fetch('https://graphql.datocms.com/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: '7e2001b357adce3ae4e96be1742b99',
+      },
+      body: JSON.stringify({
+        query: `query {
+          allCommunities {
+            id
+            title
+            image
+            creatorslug
+         }
+        }`,
+      }),
+    })
+      .then((res) => res.json())
       .then((resFull) => {
-        setFollowers(resFull);
+        const datoCommunities = resFull.data.allCommunities;
+        console.log(datoCommunities);
+        setCommunities(datoCommunities);
       });
   }, []);
 
   const user = 'danielalfb';
-  const [communities, setCommunities] = React.useState([
-    {
-      id: '07132021',
-      title: 'Co&Ca',
-      image: 'https://m.media-amazon.com/images/I/61TJ9b3IegL._AC_SL1500_.jpg',
-      url: 'https://open.spotify.com/artist/3utxjLheHaVEd9bPjQRsy8',
-    },
-  ]);
+  const [communities, setCommunities] = React.useState([]);
 
   return (
     <>
@@ -98,14 +119,23 @@ export default function Home() {
                 e.preventDefault();
                 const formsData = new FormData(e.target);
                 const community = {
-                  id: new Date(),
                   title: formsData.get('title'),
                   image: formsData.get('image'),
-                  url: formsData.get('link'),
+                  creatorslug: user,
                 };
 
-                const updatedCommunities = [...communities, community];
-                setCommunities(updatedCommunities);
+                fetch('/api/communities', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(community),
+                }).then(async (res) => {
+                  const data = await res.json();
+                  const community = data.createdData;
+                  const updatedCommunities = [...communities, community];
+                  setCommunities(updatedCommunities);
+                });
               }}
             >
               <div>
@@ -123,13 +153,7 @@ export default function Home() {
                   aria-label="Coloque uma URL para usarmos de capa."
                 />
               </div>
-              <div>
-                <input
-                  placeholder="Qual a URL da sua comunidade?"
-                  name="link"
-                  aria-label="Qual a URL da sua comunidade?"
-                />
-              </div>
+
               <button>Criar comunidade</button>
             </form>
           </Box>
@@ -140,13 +164,17 @@ export default function Home() {
         >
           <ProfileRelationsBox title="Seguidores" items={followers} />
           <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">Minhas comunidades</h2>
+            <h2 className="smallTitle">
+              Minhas comunidades&#160;
+              <span className="boxLink">({communities.length})</span>
+            </h2>
+
             <ul>
               {communities.map((result) => {
-                const { id, title, image, url } = result;
+                const { id, title, image } = result;
                 return (
-                  <li key={id}>
-                    <a href={url}>
+                  <li>
+                    <a href={`/communities/${id}`}>
                       <img src={image} />
                       <span>{title}</span>
                     </a>
